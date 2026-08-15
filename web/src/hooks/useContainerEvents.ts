@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
 import type { ContainerEvent, ContainerSummary } from '../api/types';
 
@@ -7,6 +7,23 @@ interface ContainerEventsState {
   /** null while the initial snapshot hasn't arrived yet */
   loaded: boolean;
   connectionError: string | null;
+}
+
+interface ContainerEventsResult extends ContainerEventsState {
+  /**
+   * Applies a known state change immediately instead of waiting for the SSE
+   * event to round-trip — the action endpoints only respond once Docker has
+   * already made the change, so this is never speculative.
+   */
+  patchContainer: (id: string, patch: Partial<ContainerSummary>) => void;
+}
+
+function patchState(
+  containers: ContainerSummary[],
+  id: string,
+  patch: Partial<ContainerSummary>
+): ContainerSummary[] {
+  return containers.map((c) => (c.id === id ? { ...c, ...patch } : c));
 }
 
 function applyEvent(containers: ContainerSummary[], event: ContainerEvent): ContainerSummary[] {
@@ -21,7 +38,7 @@ function applyEvent(containers: ContainerSummary[], event: ContainerEvent): Cont
  * Subscribes to /api/containers/events (SSE): one snapshot, then incremental
  * container-event deltas for the lifetime of the connection.
  */
-export function useContainerEvents(): ContainerEventsState {
+export function useContainerEvents(): ContainerEventsResult {
   const { handleUnauthorized } = useAuth();
   const [state, setState] = useState<ContainerEventsState>({
     containers: [],
@@ -65,5 +82,9 @@ export function useContainerEvents(): ContainerEventsState {
     return () => source.close();
   }, []);
 
-  return state;
+  const patchContainer = useCallback((id: string, patch: Partial<ContainerSummary>) => {
+    setState((prev) => ({ ...prev, containers: patchState(prev.containers, id, patch) }));
+  }, []);
+
+  return { ...state, patchContainer };
 }

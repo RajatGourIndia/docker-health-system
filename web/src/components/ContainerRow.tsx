@@ -8,9 +8,11 @@ import type { ContainerSummary } from '../api/types';
 export function ContainerRow({
   container,
   onOpenLogs,
+  onPatch,
 }: {
   container: ContainerSummary;
   onOpenLogs: (container: ContainerSummary) => void;
+  onPatch: (id: string, patch: Partial<ContainerSummary>) => void;
 }) {
   const isRunning = container.state === 'running';
   const stats = useContainerStats(container.id, isRunning);
@@ -63,7 +65,7 @@ export function ContainerRow({
         <span className="cell-sub">{formatRelativeTime(container.createdAt)}</span>
       </td>
       <td>
-        <ContainerActions container={container} onOpenLogs={onOpenLogs} />
+        <ContainerActions container={container} onOpenLogs={onOpenLogs} onPatch={onPatch} />
       </td>
     </tr>
   );

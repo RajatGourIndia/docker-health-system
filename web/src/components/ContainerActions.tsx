@@ -5,7 +5,16 @@ import type { ContainerAction, ContainerSummary } from '../api/types';
 interface ContainerActionsProps {
   container: ContainerSummary;
   onOpenLogs: (container: ContainerSummary) => void;
+  onPatch: (id: string, patch: Partial<ContainerSummary>) => void;
 }
+
+const RESULTING_STATE: Record<ContainerAction, ContainerSummary['state']> = {
+  start: 'running',
+  restart: 'running',
+  pause: 'paused',
+  unpause: 'running',
+  stop: 'exited',
+};
 
 function actionsForState(state: string): ContainerAction[] {
   switch (state) {
@@ -37,7 +46,7 @@ function friendlyError(err: unknown): string {
   return err instanceof Error ? err.message : 'Action failed';
 }
 
-export function ContainerActions({ container, onOpenLogs }: ContainerActionsProps) {
+export function ContainerActions({ container, onOpenLogs, onPatch }: ContainerActionsProps) {
   const [pending, setPending] = useState<ContainerAction | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -46,8 +55,10 @@ export function ContainerActions({ container, onOpenLogs }: ContainerActionsProp
     setError(null);
     try {
       await containersApi.action(container.id, action);
-      // No local state mutation here — the Docker event over SSE is the
-      // source of truth and will update the row once the action lands.
+      // The action endpoint only responds once Docker has made the change,
+      // so it's safe to reflect it immediately rather than wait for the SSE
+      // event (which still arrives and reconciles any remaining fields).
+      onPatch(container.id, { state: RESULTING_STATE[action] });
     } catch (err) {
       setError(friendlyError(err));
       setTimeout(() => setError(null), ERROR_DISPLAY_MS);

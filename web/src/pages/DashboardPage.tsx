@@ -5,7 +5,7 @@ import { LogsDrawer } from '../components/LogsDrawer';
 import type { ContainerSummary } from '../api/types';
 
 export function DashboardPage() {
-  const { containers, loaded, connectionError } = useContainerEvents();
+  const { containers, loaded, connectionError, patchContainer } = useContainerEvents();
   const [logsFor, setLogsFor] = useState<ContainerSummary | null>(null);
 
   return (
@@ -36,7 +36,12 @@ export function DashboardPage() {
           </thead>
           <tbody>
             {containers.map((container) => (
-              <ContainerRow key={container.id} container={container} onOpenLogs={setLogsFor} />
+              <ContainerRow
+                key={container.id}
+                container={container}
+                onOpenLogs={setLogsFor}
+                onPatch={patchContainer}
+              />
             ))}
           </tbody>
         </table>
