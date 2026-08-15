@@ -28,6 +28,15 @@ const ACTION_LABELS: Record<ContainerAction, string> = {
   unpause: 'Resume',
 };
 
+const ERROR_DISPLAY_MS = 4000;
+
+function friendlyError(err: unknown): string {
+  if (err instanceof Error && /already/i.test(err.message)) {
+    return 'Already in that state — the list may be a step behind, refresh if this repeats.';
+  }
+  return err instanceof Error ? err.message : 'Action failed';
+}
+
 export function ContainerActions({ container, onOpenLogs }: ContainerActionsProps) {
   const [pending, setPending] = useState<ContainerAction | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +49,8 @@ export function ContainerActions({ container, onOpenLogs }: ContainerActionsProp
       // No local state mutation here — the Docker event over SSE is the
       // source of truth and will update the row once the action lands.
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Action failed');
+      setError(friendlyError(err));
+      setTimeout(() => setError(null), ERROR_DISPLAY_MS);
     } finally {
       setPending(null);
     }

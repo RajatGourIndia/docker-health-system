@@ -226,6 +226,11 @@ input {
   margin: 0 0 var(--space-3);
 }
 
+.table .form-error {
+  max-width: 220px;
+  margin: var(--space-1) 0 0;
+}
+
 /* ---------- Table ---------- */
 
 .table {
