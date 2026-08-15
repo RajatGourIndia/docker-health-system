@@ -1,6 +1,5 @@
 node_modules/
 web/node_modules/
-.env
 *.log
 dist/
 web/dist/
