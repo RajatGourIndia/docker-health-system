@@ -1,0 +1,9 @@
+node_modules/
+web/node_modules/
+.env
+*.log
+dist/
+web/dist/
+build/
+coverage/
+.DS_Store
