@@ -1,0 +1,22 @@
+services:
+  dashboard:
+    build: .
+    container_name: dashboard
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      # Lets the dashboard talk to the host's Docker daemon.
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Persists the admin account + settings across restarts/rebuilds.
+      - dashboard-data:/app/data
+    # Needed to read/write the Docker socket above — it's owned by root (or
+    # a "docker" group) on most hosts, which the image's non-root "node"
+    # user can't reach otherwise. This is the same tradeoff other Docker
+    # management UIs (e.g. Portainer) make for the same reason.
+    user: root
+
+volumes:
+  dashboard-data:

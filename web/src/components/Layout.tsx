@@ -3,7 +3,7 @@ import { useAuth } from '../auth/AuthContext';
 import { useActivityPing } from '../hooks/useActivityPing';
 
 export function Layout() {
-  const { session, logout } = useAuth();
+  const { logout } = useAuth();
   useActivityPing();
 
   return (
@@ -25,7 +25,6 @@ export function Layout() {
           </NavLink>
         </nav>
         <div className="app-header__session">
-          {session && <span>{session.username}</span>}
           <button className="btn btn--ghost" onClick={() => logout()}>
             Sign out
           </button>

@@ -1,28 +1,43 @@
 const path = require('path');
+const crypto = require('crypto');
 require('dotenv').config({ path: path.resolve(__dirname, '..', '..', '.env') });
+const { readJson, writeJson } = require('../storage/jsonStore');
 
-function required(name) {
-  const value = process.env[name];
-  if (!value || !value.trim()) {
-    throw new Error(
-      `Refusing to start: ${name} must be set in .env. See .env.example. ` +
-        'No default credentials are provided for security reasons.'
-    );
+const dataDir = process.env.DATA_DIR || path.resolve(__dirname, '..', '..', 'data');
+
+// Signs the session cookie. Rather than making every user generate and
+// paste one before first boot, an explicit SESSION_SECRET in .env still
+// wins (e.g. to pin it across multiple instances that must share
+// sessions), but otherwise one is generated once and persisted in DATA_DIR
+// — the same volume the admin account already lives in — so a normal
+// single-instance setup needs zero manual secret handling.
+function resolveSessionSecret() {
+  if (process.env.SESSION_SECRET && process.env.SESSION_SECRET.trim()) {
+    return process.env.SESSION_SECRET.trim();
   }
-  return value;
+
+  const secretPath = path.join(dataDir, 'session-secret.json');
+  const stored = readJson(secretPath, null);
+  if (stored?.secret) {
+    return stored.secret;
+  }
+
+  const generated = crypto.randomBytes(32).toString('hex');
+  writeJson(secretPath, { secret: generated });
+  return generated;
 }
 
 const config = {
   port: Number(process.env.PORT) || 3000,
   nodeEnv: process.env.NODE_ENV || 'development',
 
-  // Where the admin account and app settings are persisted (JSON files).
-  // Mount this as a volume in production, or the admin account is lost on
-  // every container recreate.
-  dataDir: process.env.DATA_DIR || path.resolve(__dirname, '..', '..', 'data'),
+  // Where the admin account, settings, and the auto-generated session
+  // secret are persisted (JSON files). Mount this as a volume in
+  // production, or all three are lost on every container recreate.
+  dataDir,
 
   auth: {
-    sessionSecret: required('SESSION_SECRET'),
+    sessionSecret: resolveSessionSecret(),
     idleTimeoutMinutes: Number(process.env.SESSION_IDLE_TIMEOUT_MINUTES) || 30,
     cookieSecure: process.env.COOKIE_SECURE === 'true',
   },
