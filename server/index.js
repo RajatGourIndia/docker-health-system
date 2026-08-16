@@ -11,7 +11,7 @@ async function main() {
 
   const app = createApp();
   app.listen(config.port, () => {
-    console.log(`docker-dashboard listening on http://localhost:${config.port}`);
+    console.log(`docker-health-system listening on http://localhost:${config.port}`);
   });
 }
 

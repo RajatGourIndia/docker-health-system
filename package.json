@@ -1,5 +1,5 @@
 {
-  "name": "docker-dashboard",
+  "name": "docker-health-system",
   "version": "0.1.0",
   "description": "A lightweight web dashboard for monitoring and managing local Docker containers.",
   "private": true,

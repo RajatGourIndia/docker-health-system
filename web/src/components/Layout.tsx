@@ -11,7 +11,7 @@ export function Layout() {
       <header className="app-header">
         <div className="app-header__brand">
           <span className="app-header__dot" aria-hidden="true" />
-          Docker Dashboard
+          docker-health-system
         </div>
         <nav className="app-nav">
           <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>

@@ -7,7 +7,43 @@ A lightweight, self-hosted web dashboard for monitoring and managing local Docke
 
 ## Quick start
 
-The easiest way to run it is with Docker Compose:
+The fastest way to run it — just Docker installed, one command, nothing to configure. Every setting has a safe default, and the admin account is created through the first-run screen in your browser, not a config file.
+
+```bash
+docker run -d --name dashboard \
+  -p 3000:3000 \
+  --user root \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v dashboard-data:/app/data \
+  rajatindia/docker-health-system:latest
+```
+
+*(`--user root` is required, not optional — the Docker socket is root-owned on virtually every host, and the container can't reach it otherwise.)*
+
+Prefer Compose? Same thing, referencing the published image directly (no cloning, no build):
+
+```yaml
+services:
+  dashboard:
+    image: rajatindia/docker-health-system:latest
+    user: root
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dashboard-data:/app/data
+
+volumes:
+  dashboard-data:
+```
+
+```bash
+docker compose up -d
+```
+
+### Build from source
+
+For working on the code itself, rather than just running it:
 
 ```bash
 git clone https://github.com/RajatGourIndia/docker-health-system.git
@@ -16,18 +52,7 @@ cp .env.example .env
 docker compose up -d
 ```
 
-Or, without Compose, the equivalent `docker run` one-liner:
-
-```bash
-docker build -t docker-health-system .
-docker run -d --name dashboard \
-  -p 3000:3000 \
-  --env-file .env \
-  --user root \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v dashboard-data:/app/data \
-  docker-health-system
-```
+This uses the `docker-compose.yml` already in the repo, which builds from the local `Dockerfile` instead of pulling the published image.
 
 ### First run
 

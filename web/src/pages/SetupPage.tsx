@@ -38,7 +38,7 @@ export function SetupPage({ onComplete }: { onComplete: () => void }) {
             <Layers size={18} strokeWidth={2.2} />
           </div>
           <div>
-            <div className="login-brand__name">Docker Dashboard</div>
+            <div className="login-brand__name">docker-health-system</div>
             <div className="login-brand__tagline">Lightweight container monitoring</div>
           </div>
         </div>

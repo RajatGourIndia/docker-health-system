@@ -1,5 +1,5 @@
 {
-  "name": "docker-dashboard-web",
+  "name": "docker-health-system-web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
