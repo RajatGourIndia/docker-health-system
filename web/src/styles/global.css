@@ -457,7 +457,10 @@ input {
   background: var(--surface-1);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  overflow-x: auto;
+  /* No overflow property here at all — setting overflow-x alone forces
+     overflow-y to auto too (per spec), which would turn this into a scroll
+     container and break position:sticky on the header (it would stick to
+     this box instead of the page). The table just grows with the page. */
 }
 
 .table {
