@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import { adminApi, ApiError } from '../api/client';
+import { useAuth } from '../auth/AuthContext';
 import type { AdminSettings, SystemInfo } from '../api/types';
+
+const LOGOUT_AFTER_PASSWORD_CHANGE_MS = 1200;
 
 function formatUptime(totalSeconds: number): string {
   const hours = Math.floor(totalSeconds / 3600);
@@ -11,6 +14,7 @@ function formatUptime(totalSeconds: number): string {
 }
 
 function ChangePasswordPanel() {
+  const { logout } = useAuth();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -35,6 +39,12 @@ function ChangePasswordPanel() {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
+      // Changing the password doesn't invalidate the current session server
+      // side, so force a sign-out here — otherwise the account "changed
+      // password" but the browser stays logged in on the old session.
+      setTimeout(() => {
+        logout();
+      }, LOGOUT_AFTER_PASSWORD_CHANGE_MS);
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'Failed to change password');
     } finally {
@@ -47,7 +57,7 @@ function ChangePasswordPanel() {
       <h2>Change password</h2>
       <form onSubmit={handleSubmit}>
         {error && <p className="form-error">{error}</p>}
-        {success && <p className="form-success">Password updated.</p>}
+        {success && <p className="form-success">Password updated — signing you out…</p>}
         <div className="field">
           <label htmlFor="current-password">Current password</label>
           <input

@@ -653,10 +653,11 @@ input {
 /* ---------- Admin ---------- */
 
 .admin-grid {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: var(--space-4);
-  max-width: 480px;
+  align-items: start;
+  max-width: 1100px;
 }
 
 .panel {

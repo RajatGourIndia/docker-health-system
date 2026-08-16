@@ -18,6 +18,15 @@ export class ApiError extends Error {
   }
 }
 
+// Set by AuthContext so that ANY 401 from ANY API call — not just the ones a
+// caller happens to check for — immediately drops the app back to the login
+// screen instead of leaving stale authenticated-looking UI on screen.
+let onUnauthorized: (() => void) | null = null;
+
+export function setUnauthorizedHandler(handler: (() => void) | null) {
+  onUnauthorized = handler;
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     credentials: 'include',
@@ -32,6 +41,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
       message = body.error || message;
     } catch {
       // response had no JSON body — fall back to statusText
+    }
+    if (res.status === 401 && path !== '/api/auth/login') {
+      onUnauthorized?.();
     }
     throw new ApiError(message, res.status);
   }

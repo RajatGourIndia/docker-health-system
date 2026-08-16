@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
-import { ApiError, authApi } from '../api/client';
+import { ApiError, authApi, setUnauthorizedHandler } from '../api/client';
 import type { SessionInfo } from '../api/types';
 
 interface AuthContextValue {
@@ -49,6 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setSession(null);
     setStatus('anonymous');
   }, []);
+
+  // Any 401 from any API call (not just the ones a caller happens to check
+  // for) drops the app back to the login screen immediately.
+  useEffect(() => {
+    setUnauthorizedHandler(handleUnauthorized);
+    return () => setUnauthorizedHandler(null);
+  }, [handleUnauthorized]);
 
   const value = useMemo(
     () => ({ session, status, login, logout, handleUnauthorized }),
