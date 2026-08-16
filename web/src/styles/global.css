@@ -532,6 +532,19 @@ input {
   font-family: var(--font-mono);
 }
 
+/* Long container/image names truncate with an ellipsis instead of stretching
+   the column — the full value is still available via the title tooltip. */
+.cell-name-cell .cell-name,
+.cell-name-cell .cell-sub,
+.image-repo .cell-name {
+  display: inline-block;
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
 .cell-ports {
   display: flex;
   flex-direction: column;

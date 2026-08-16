@@ -19,9 +19,13 @@ export function ContainerRow({
 
   return (
     <tr>
-      <td>
-        <div className="cell-name">{container.name}</div>
-        <div className="cell-sub">{container.image}</div>
+      <td className="cell-name-cell">
+        <div className="cell-name" title={container.name}>
+          {container.name}
+        </div>
+        <div className="cell-sub" title={container.image}>
+          {container.image}
+        </div>
       </td>
       <td>
         <StatusBadge state={container.state} />

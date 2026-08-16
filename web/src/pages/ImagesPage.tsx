@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Layers } from 'lucide-react';
 import { imagesApi } from '../api/client';
 import { usePagedFilter } from '../hooks/usePagedFilter';
+import { useDynamicPageSize } from '../hooks/useDynamicPageSize';
 import { SearchInput } from '../components/SearchInput';
 import { Pagination } from '../components/Pagination';
 import { formatBytes, formatRelativeTime } from '../utils/format';
 import type { ImageSummary } from '../api/types';
 
+const ROW_HEIGHT_PX = 60;
 const LARGE_IMAGE_BYTES = 500 * 1024 * 1024;
 
 function isOwnImage(image: ImageSummary): boolean {
@@ -21,9 +23,12 @@ function matchesImage(image: ImageSummary, q: string): boolean {
 export function ImagesPage() {
   const [images, setImages] = useState<ImageSummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const tableAnchorRef = useRef<HTMLDivElement>(null);
+  const pageSize = useDynamicPageSize(ROW_HEIGHT_PX, tableAnchorRef);
   const { query, setQuery, page, setPage, totalPages, filtered, pageItems } = usePagedFilter(
     images ?? [],
-    matchesImage
+    matchesImage,
+    pageSize
   );
 
   useEffect(() => {
@@ -73,7 +78,7 @@ export function ImagesPage() {
           <p>No images match "{query}"</p>
         </div>
       ) : (
-        <div className="table-wrap">
+        <div className="table-wrap" ref={tableAnchorRef}>
           <table className="table">
             <thead>
               <tr>
@@ -94,7 +99,7 @@ export function ImagesPage() {
                           <span className="cell-sub">&lt;none&gt;</span>
                         ) : (
                           image.repoTags.map((tag) => (
-                            <div className="cell-name" key={tag}>
+                            <div className="cell-name" key={tag} title={tag}>
                               {tag}
                             </div>
                           ))

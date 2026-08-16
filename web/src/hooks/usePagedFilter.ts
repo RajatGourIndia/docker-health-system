@@ -1,12 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
-const PAGE_SIZE = 15;
-
 /**
  * Client-side search + pagination, shared by the Containers and Images
- * tables so both behave identically at the UI level.
+ * tables so both behave identically at the UI level. `pageSize` is expected
+ * to come from useDynamicPageSize so the page adapts to the viewport rather
+ * than using a fixed row count.
  */
-export function usePagedFilter<T>(items: T[], matches: (item: T, query: string) => boolean) {
+export function usePagedFilter<T>(
+  items: T[],
+  matches: (item: T, query: string) => boolean,
+  pageSize: number
+) {
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(1);
 
@@ -15,7 +19,7 @@ export function usePagedFilter<T>(items: T[], matches: (item: T, query: string) 
     return q ? items.filter((item) => matches(item, q)) : items;
   }, [items, query, matches]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
 
   useEffect(() => {
     setPage(1);
@@ -25,7 +29,7 @@ export function usePagedFilter<T>(items: T[], matches: (item: T, query: string) 
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const pageItems = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return { query, setQuery, page, setPage, totalPages, filtered, pageItems };
 }
