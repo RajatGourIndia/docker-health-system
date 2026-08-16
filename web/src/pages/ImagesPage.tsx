@@ -9,7 +9,7 @@ import type { ImageSummary } from '../api/types';
 
 // Caps how many rows render at once — the page scrolls normally, so this
 // doesn't need to match the viewport.
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 20;
 const LARGE_IMAGE_BYTES = 500 * 1024 * 1024;
 
 function isOwnImage(image: ImageSummary): boolean {
@@ -47,22 +47,26 @@ export function ImagesPage() {
 
   return (
     <>
-      <div className="page-header">
-        <h1>Images</h1>
+      <div className="page-toolbar">
+        <div className="page-header">
+          <h1>Images</h1>
+          {images && (
+            <span className="cell-sub">
+              {filtered.length} of {images.length}
+            </span>
+          )}
+        </div>
         {images && (
-          <span className="cell-sub">
-            {filtered.length} of {images.length}
-          </span>
+          <div className="page-toolbar__controls">
+            <SearchInput value={query} onChange={setQuery} placeholder="Search repository, tag, ID…" />
+            {filtered.length > 0 && (
+              <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+            )}
+          </div>
         )}
       </div>
 
       {error && <div className="form-error">{error}</div>}
-
-      {images && (
-        <div className="page-toolbar">
-          <SearchInput value={query} onChange={setQuery} placeholder="Search repository, tag, ID…" />
-        </div>
-      )}
 
       {!images ? (
         <div className="table-empty">Loading images…</div>
@@ -120,10 +124,6 @@ export function ImagesPage() {
             </tbody>
           </table>
         </div>
-      )}
-
-      {images && filtered.length > 0 && (
-        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
       )}
     </>
   );

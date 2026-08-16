@@ -45,12 +45,16 @@ input {
 }
 
 .app-header {
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-3) var(--space-5);
+  padding: 0 var(--space-5);
   border-bottom: 1px solid var(--border);
   background: var(--surface-1);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .app-header__brand {
@@ -116,11 +120,11 @@ input {
   margin: 0 auto;
 }
 
+/* Heading + count, nested inside .page-toolbar (left side) */
 .page-header {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: var(--space-4);
+  gap: var(--space-2);
 }
 
 .page-header h1 {
@@ -130,17 +134,25 @@ input {
   letter-spacing: 0.01em;
 }
 
+/* Heading + search + pagination, one sticky row pinned directly below the
+   nav bar (56px = .app-header's height). */
 .page-toolbar {
-  height: 52px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin-bottom: var(--space-4);
   position: sticky;
-  top: 0;
+  top: 56px;
   z-index: 5;
   background: var(--surface-page);
+}
+
+.page-toolbar__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .search-input {
@@ -177,9 +189,8 @@ input {
 .pagination {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  flex: none;
 }
 
 .pagination__label {
@@ -466,9 +477,9 @@ input {
   padding: var(--space-2) var(--space-3);
   border-bottom: 1px solid var(--gridline);
   position: sticky;
-  /* Matches .page-toolbar's fixed height so the sticky header sits flush
-     below the sticky toolbar during page scroll, with no overlap/gap. */
-  top: 52px;
+  /* Stacks below the sticky nav (56px) + sticky toolbar (56px) so all three
+     sticky layers sit flush with no overlap/gap during page scroll. */
+  top: 112px;
   background: var(--surface-1);
   z-index: 1;
 }

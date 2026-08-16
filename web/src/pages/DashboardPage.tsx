@@ -10,7 +10,7 @@ import type { ContainerSummary } from '../api/types';
 
 // Caps DOM/SSE work per page (each row runs its own live-stats subscription)
 // — the page scrolls normally, so this doesn't need to match the viewport.
-const PAGE_SIZE = 25;
+const PAGE_SIZE = 20;
 const SKELETON_COLUMNS = [70, 20, 80, 80, 60, 60, 110];
 
 function SkeletonRows({ count = 4 }: { count?: number }) {
@@ -49,22 +49,26 @@ export function DashboardPage() {
 
   return (
     <>
-      <div className="page-header">
-        <h1>Containers</h1>
+      <div className="page-toolbar">
+        <div className="page-header">
+          <h1>Containers</h1>
+          {loaded && (
+            <span className="cell-sub">
+              {filtered.length} of {containers.length}
+            </span>
+          )}
+        </div>
         {loaded && (
-          <span className="cell-sub">
-            {filtered.length} of {containers.length}
-          </span>
+          <div className="page-toolbar__controls">
+            <SearchInput value={query} onChange={setQuery} placeholder="Search name, image, status…" />
+            {filtered.length > 0 && (
+              <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+            )}
+          </div>
         )}
       </div>
 
       {connectionError && <div className="connection-banner">{connectionError}</div>}
-
-      {loaded && (
-        <div className="page-toolbar">
-          <SearchInput value={query} onChange={setQuery} placeholder="Search name, image, status…" />
-        </div>
-      )}
 
       {loaded && containers.length === 0 ? (
         <div className="empty-state">
@@ -107,10 +111,6 @@ export function DashboardPage() {
             </tbody>
           </table>
         </div>
-      )}
-
-      {loaded && filtered.length > 0 && (
-        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
       )}
 
       {logsFor && <LogsDrawer container={logsFor} onClose={() => setLogsFor(null)} />}
