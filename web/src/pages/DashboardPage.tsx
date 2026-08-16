@@ -9,7 +9,7 @@ import { SearchInput } from '../components/SearchInput';
 import { Pagination } from '../components/Pagination';
 import type { ContainerSummary } from '../api/types';
 
-const ROW_HEIGHT_PX = 60;
+const ROW_HEIGHT_PX = 62;
 const SKELETON_COLUMNS = [70, 20, 80, 80, 60, 60, 110];
 
 function SkeletonRows({ count = 4 }: { count?: number }) {
@@ -64,6 +64,7 @@ export function DashboardPage() {
       {loaded && (
         <div className="page-toolbar">
           <SearchInput value={query} onChange={setQuery} placeholder="Search name, image, status…" />
+          <Pagination page={page} totalPages={totalPages} onChange={setPage} />
         </div>
       )}
 
@@ -109,8 +110,6 @@ export function DashboardPage() {
           </table>
         </div>
       )}
-
-      {loaded && <Pagination page={page} totalPages={totalPages} onChange={setPage} />}
 
       {logsFor && <LogsDrawer container={logsFor} onClose={() => setLogsFor(null)} />}
     </>

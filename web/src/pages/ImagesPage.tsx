@@ -8,7 +8,7 @@ import { Pagination } from '../components/Pagination';
 import { formatBytes, formatRelativeTime } from '../utils/format';
 import type { ImageSummary } from '../api/types';
 
-const ROW_HEIGHT_PX = 60;
+const ROW_HEIGHT_PX = 62;
 const LARGE_IMAGE_BYTES = 500 * 1024 * 1024;
 
 function isOwnImage(image: ImageSummary): boolean {
@@ -62,6 +62,7 @@ export function ImagesPage() {
       {images && (
         <div className="page-toolbar">
           <SearchInput value={query} onChange={setQuery} placeholder="Search repository, tag, ID…" />
+          <Pagination page={page} totalPages={totalPages} onChange={setPage} />
         </div>
       )}
 
@@ -122,8 +123,6 @@ export function ImagesPage() {
           </table>
         </div>
       )}
-
-      {images && <Pagination page={page} totalPages={totalPages} onChange={setPage} />}
     </>
   );
 }

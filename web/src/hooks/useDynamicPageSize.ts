@@ -3,8 +3,11 @@ import type { RefObject } from 'react';
 
 const MIN_PAGE_SIZE = 4;
 const MAX_PAGE_SIZE = 50;
-// Space below the table reserved for the pagination row + page bottom padding.
-const RESERVED_BELOW_PX = 72;
+// Table header row (thead) height — subtracted from available space since it
+// eats into the anchor's box before any body rows do.
+const TABLE_HEADER_PX = 37;
+// Space below the table reserved for the page's own bottom padding/margin.
+const RESERVED_BELOW_PX = 40;
 
 /**
  * Computes how many table rows fit between `anchorRef`'s current top offset
@@ -17,7 +20,7 @@ export function useDynamicPageSize(rowHeightPx: number, anchorRef: RefObject<HTM
   useEffect(() => {
     function recalc() {
       const top = anchorRef.current?.getBoundingClientRect().top ?? 0;
-      const available = window.innerHeight - top - RESERVED_BELOW_PX;
+      const available = window.innerHeight - top - TABLE_HEADER_PX - RESERVED_BELOW_PX;
       const rows = Math.floor(available / rowHeightPx);
       setPageSize(Math.max(MIN_PAGE_SIZE, Math.min(MAX_PAGE_SIZE, rows)));
     }

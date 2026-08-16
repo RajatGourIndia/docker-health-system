@@ -136,6 +136,11 @@ input {
   justify-content: space-between;
   gap: var(--space-3);
   margin-bottom: var(--space-4);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: var(--space-2) 0;
+  background: var(--surface-page);
 }
 
 .search-input {
@@ -172,9 +177,8 @@ input {
 .pagination {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--space-3);
-  margin-top: var(--space-4);
+  flex: none;
 }
 
 .pagination__label {
@@ -533,16 +537,16 @@ input {
 }
 
 /* Long container/image names truncate with an ellipsis instead of stretching
-   the column — the full value is still available via the title tooltip. */
+   the column — the full value is still available via the title tooltip.
+   Block-level (not inline-block) so name/sub stay stacked, not side by side. */
 .cell-name-cell .cell-name,
 .cell-name-cell .cell-sub,
 .image-repo .cell-name {
-  display: inline-block;
+  display: block;
   max-width: 260px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  vertical-align: middle;
 }
 
 .cell-ports {
