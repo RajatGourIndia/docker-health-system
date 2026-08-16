@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Play, Square, Pause, RotateCw, ScrollText } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { containersApi } from '../api/client';
 import type { ContainerAction, ContainerSummary } from '../api/types';
 
@@ -37,6 +39,14 @@ const ACTION_LABELS: Record<ContainerAction, string> = {
   unpause: 'Resume',
 };
 
+const ACTION_ICONS: Record<ContainerAction, LucideIcon> = {
+  start: Play,
+  stop: Square,
+  restart: RotateCw,
+  pause: Pause,
+  unpause: Play,
+};
+
 const ERROR_DISPLAY_MS = 4000;
 
 function friendlyError(err: unknown): string {
@@ -70,17 +80,22 @@ export function ContainerActions({ container, onOpenLogs, onPatch }: ContainerAc
   return (
     <div>
       <div className="btn-row">
-        {actionsForState(container.state).map((action) => (
-          <button
-            key={action}
-            className={`btn ${action === 'stop' ? 'btn--danger' : ''}`}
-            disabled={pending !== null}
-            onClick={() => run(action)}
-          >
-            {pending === action ? '…' : ACTION_LABELS[action]}
-          </button>
-        ))}
+        {actionsForState(container.state).map((action) => {
+          const Icon = ACTION_ICONS[action];
+          return (
+            <button
+              key={action}
+              className={`btn ${action === 'stop' ? 'btn--danger' : ''}`}
+              disabled={pending !== null}
+              onClick={() => run(action)}
+            >
+              <Icon size={13} />
+              {pending === action ? '…' : ACTION_LABELS[action]}
+            </button>
+          );
+        })}
         <button className="btn btn--ghost" onClick={() => onOpenLogs(container)}>
+          <ScrollText size={13} />
           Logs
         </button>
       </div>

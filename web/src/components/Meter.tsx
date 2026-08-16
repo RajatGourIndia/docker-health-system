@@ -8,6 +8,7 @@ interface MeterProps {
 
 export function Meter({ percent, label, warningAt = 70, criticalAt = 90 }: MeterProps) {
   const clamped = Math.max(0, Math.min(100, percent));
+  const glowing = clamped >= warningAt;
   const color =
     clamped >= criticalAt
       ? 'var(--status-critical)'
@@ -16,7 +17,10 @@ export function Meter({ percent, label, warningAt = 70, criticalAt = 90 }: Meter
         : 'var(--accent)';
 
   return (
-    <div className="meter" style={{ ['--meter-color' as string]: color }}>
+    <div
+      className={`meter${glowing ? ' meter--glow' : ''}`}
+      style={{ ['--meter-color' as string]: color }}
+    >
       <div className="meter__track">
         <div className="meter__fill" style={{ width: `${clamped}%` }} />
       </div>

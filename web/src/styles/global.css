@@ -53,14 +53,16 @@ input {
   align-items: center;
   gap: var(--space-2);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 14px;
+  letter-spacing: 0.01em;
 }
 
 .app-header__dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--status-good);
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
   flex: none;
 }
 
@@ -74,14 +76,23 @@ input {
   border-radius: var(--radius-sm);
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-.app-nav a.active,
+.app-nav a.active {
+  color: var(--text-primary);
+  background: var(--accent-dim);
+}
+
 .app-nav a:hover {
   color: var(--text-primary);
   background: var(--surface-2);
+}
+
+.app-nav a.active:hover {
+  background: var(--accent-dim);
 }
 
 .app-header__session {
@@ -108,14 +119,16 @@ input {
 }
 
 .page-header h1 {
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 600;
   margin: 0;
+  letter-spacing: 0.01em;
 }
 
 .connection-banner {
   font-size: 13px;
   color: var(--status-warning);
-  background: color-mix(in srgb, var(--status-warning) 12%, var(--surface-1));
+  background: rgba(245, 165, 36, 0.1);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
@@ -126,44 +139,62 @@ input {
 
 .btn {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   border: 1px solid var(--border);
-  background: var(--surface-1);
-  color: var(--text-primary);
+  background: var(--surface-2);
+  color: var(--text-secondary);
   border-radius: var(--radius-sm);
   padding: var(--space-2) var(--space-3);
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 500;
   cursor: pointer;
   line-height: 1.2;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn svg {
+  flex: none;
 }
 
 .btn:hover:not(:disabled) {
-  background: var(--surface-2);
+  background: var(--surface-3);
+  color: var(--text-primary);
+  border-color: var(--border);
 }
 
 .btn:disabled {
-  opacity: 0.5;
+  opacity: 0.45;
   cursor: not-allowed;
 }
 
 .btn--primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: #04211e;
+  font-weight: 600;
 }
 
 .btn--primary:hover:not(:disabled) {
   background: var(--accent-strong);
   border-color: var(--accent-strong);
+  color: #04211e;
 }
 
-.btn--danger {
+.btn--danger:hover:not(:disabled) {
   color: var(--status-critical);
+  border-color: color-mix(in srgb, var(--status-critical) 40%, var(--border));
+  background: rgba(242, 73, 92, 0.08);
 }
 
 .btn--ghost {
   background: transparent;
   border-color: transparent;
+}
+
+.btn--ghost:hover:not(:disabled) {
+  background: var(--surface-2);
 }
 
 .btn-row {
@@ -190,7 +221,8 @@ input {
 }
 
 .login-card h1 {
-  font-size: 17px;
+  font-size: 16px;
+  font-weight: 600;
   margin: 0 0 var(--space-4);
 }
 
@@ -243,9 +275,9 @@ input {
   text-align: left;
   font-weight: 500;
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 10.5px;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   padding: var(--space-2) var(--space-3);
   border-bottom: 1px solid var(--gridline);
 }
@@ -260,6 +292,14 @@ input {
   border-bottom: none;
 }
 
+.table tbody tr {
+  transition: background-color 0.12s ease;
+}
+
+.table tbody tr:hover {
+  background: var(--surface-1);
+}
+
 .table-empty {
   padding: var(--space-6);
   text-align: center;
@@ -268,20 +308,25 @@ input {
 
 .cell-name {
   font-weight: 600;
+  font-size: 13.5px;
+  color: var(--text-primary);
 }
 
 .cell-sub {
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: 11.5px;
   margin-top: 2px;
+  font-family: var(--font-mono);
 }
 
 .cell-ports {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
   color: var(--text-secondary);
+  font-size: 12px;
 }
 
 /* ---------- Status badge ---------- */
@@ -296,14 +341,15 @@ input {
 }
 
 .status-badge__dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex: none;
 }
 
 .status-badge--running .status-badge__dot {
   background: var(--status-good);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--status-good) 70%, transparent);
 }
 .status-badge--paused .status-badge__dot {
   background: var(--status-warning);
@@ -313,10 +359,11 @@ input {
 }
 .status-badge--exited .status-badge__dot,
 .status-badge--created .status-badge__dot {
-  background: var(--text-muted);
+  background: var(--status-muted);
 }
 .status-badge--dead .status-badge__dot {
   background: var(--status-critical);
+  box-shadow: 0 0 6px color-mix(in srgb, var(--status-critical) 70%, transparent);
 }
 
 /* ---------- Meter ---------- */
@@ -324,26 +371,31 @@ input {
 .meter {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   min-width: 110px;
 }
 
 .meter__track {
-  height: 5px;
-  border-radius: 3px;
-  background: color-mix(in srgb, var(--meter-color, var(--accent)) 18%, var(--surface-2));
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface-3);
   overflow: hidden;
 }
 
 .meter__fill {
   height: 100%;
-  border-radius: 3px;
+  border-radius: 2px;
   background: var(--meter-color, var(--accent));
-  transition: width 0.4s ease;
+  transition: width 0.4s ease, box-shadow 0.2s ease;
+}
+
+.meter--glow .meter__fill {
+  box-shadow: 0 0 6px var(--meter-color, var(--accent));
 }
 
 .meter__label {
   font-size: 11px;
+  font-family: var(--font-mono);
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
 }
@@ -353,7 +405,7 @@ input {
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: flex-end;
   z-index: 20;
@@ -385,13 +437,13 @@ input {
   flex: 1;
   overflow: auto;
   padding: var(--space-3) var(--space-4);
-  background: #0d0d0d;
+  background: var(--surface-page);
 }
 
 .log-line {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--font-mono);
   font-size: 12px;
-  color: #d8d8d3;
+  color: var(--text-secondary);
   white-space: pre-wrap;
   word-break: break-all;
   line-height: 1.5;
