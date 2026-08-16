@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Layers } from 'lucide-react';
 import { useAuth } from '../auth/AuthContext';
 import { ApiError } from '../api/client';
 
@@ -34,33 +35,49 @@ export function LoginPage() {
 
   return (
     <div className="login-page">
-      <form className="login-card" onSubmit={handleSubmit}>
-        <h1>Sign in</h1>
-        {error && <p className="form-error">{error}</p>}
-        <div className="field">
-          <label htmlFor="username">Username</label>
-          <input
-            id="username"
-            autoFocus
-            autoComplete="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+      <div className="login-content">
+        <div className="login-brand">
+          <div className="login-brand__mark" aria-hidden="true">
+            <Layers size={18} strokeWidth={2.2} />
+          </div>
+          <div>
+            <div className="login-brand__name">Docker Dashboard</div>
+            <div className="login-brand__tagline">Lightweight container monitoring</div>
+          </div>
         </div>
-        <div className="field">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <button className="btn btn--primary" type="submit" disabled={submitting} style={{ width: '100%' }}>
-          {submitting ? 'Signing in…' : 'Sign in'}
-        </button>
-      </form>
+        <form className="login-card" onSubmit={handleSubmit}>
+          <h1>Sign in</h1>
+          {error && <p className="form-error">{error}</p>}
+          <div className="field">
+            <label htmlFor="username">Username</label>
+            <input
+              id="username"
+              autoFocus
+              autoComplete="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button
+            className="btn btn--primary"
+            type="submit"
+            disabled={submitting}
+            style={{ width: '100%' }}
+          >
+            {submitting ? 'Signing in…' : 'Sign in'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
