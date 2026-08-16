@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../auth/AuthContext';
+import { ApiError, containersApi } from '../api/client';
 import type { ContainerEvent, ContainerSummary } from '../api/types';
+
+// Safety net alongside the SSE stream: some proxies/tunnels silently stall a
+// long-lived connection without ever closing it, so the browser never learns
+// it needs to reconnect. Polling the full list periodically bounds how stale
+// the UI can get regardless of whether the stream is actually delivering.
+const RECONCILE_POLL_MS = 8000;
 
 interface ContainerEventsState {
   containers: ContainerSummary[];
@@ -24,6 +31,10 @@ function patchState(
   patch: Partial<ContainerSummary>
 ): ContainerSummary[] {
   return containers.map((c) => (c.id === id ? { ...c, ...patch } : c));
+}
+
+function sorted(containers: ContainerSummary[]): ContainerSummary[] {
+  return [...containers].sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function applyEvent(containers: ContainerSummary[], event: ContainerEvent): ContainerSummary[] {
@@ -53,11 +64,7 @@ export function useContainerEvents(): ContainerEventsResult {
 
     source.addEventListener('snapshot', (evt) => {
       const containers = JSON.parse((evt as MessageEvent).data) as ContainerSummary[];
-      setState({
-        containers: [...containers].sort((a, b) => a.name.localeCompare(b.name)),
-        loaded: true,
-        connectionError: null,
-      });
+      setState({ containers: sorted(containers), loaded: true, connectionError: null });
     });
 
     source.addEventListener('container-event', (evt) => {
@@ -80,6 +87,28 @@ export function useContainerEvents(): ContainerEventsResult {
     });
 
     return () => source.close();
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const poll = setInterval(async () => {
+      try {
+        const containers = await containersApi.list(true);
+        if (cancelled) return;
+        setState((prev) => ({ ...prev, containers: sorted(containers) }));
+      } catch (err) {
+        if (err instanceof ApiError && err.status === 401) {
+          handleUnauthorizedRef.current();
+        }
+        // Any other failure (e.g. a transient network blip) just waits for the next tick.
+      }
+    }, RECONCILE_POLL_MS);
+
+    return () => {
+      cancelled = true;
+      clearInterval(poll);
+    };
   }, []);
 
   const patchContainer = useCallback((id: string, patch: Partial<ContainerSummary>) => {
