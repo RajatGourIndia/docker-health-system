@@ -51,7 +51,11 @@ async function changePassword(currentPassword, newPassword) {
   }
   const matches = await bcrypt.compare(currentPassword || '', admin.passwordHash);
   if (!matches) {
-    throw new AuthError('Current password is incorrect', 401);
+    // 403, not 401 — this request IS authenticated (there's a valid session);
+    // it's just rejecting the submitted current-password proof. The frontend
+    // treats any 401 as "your session is invalid, log out" — reusing 401
+    // here would silently log the user out instead of showing this error.
+    throw new AuthError('Current password is incorrect', 403);
   }
   if (!newPassword || newPassword.length < MIN_PASSWORD_LENGTH) {
     throw new AuthError(`New password must be at least ${MIN_PASSWORD_LENGTH} characters`, 400);

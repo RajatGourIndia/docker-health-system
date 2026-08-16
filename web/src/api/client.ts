@@ -60,6 +60,7 @@ export const authApi = {
     }),
   logout: () => request<void>('/api/auth/logout', { method: 'POST' }),
   me: () => request<SessionInfo>('/api/auth/me'),
+  touch: () => request<void>('/api/auth/touch', { method: 'POST' }),
 };
 
 export const containersApi = {

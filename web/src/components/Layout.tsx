@@ -1,8 +1,10 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { useActivityPing } from '../hooks/useActivityPing';
 
 export function Layout() {
   const { session, logout } = useAuth();
+  useActivityPing();
 
   return (
     <div className="app-shell">

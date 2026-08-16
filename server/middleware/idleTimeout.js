@@ -6,6 +6,12 @@ function currentIdleTimeoutMs() {
   return (idleTimeoutMinutes || config.auth.idleTimeoutMinutes) * 60 * 1000;
 }
 
+// Only CHECKS lastActivity — deliberately does not refresh it on every
+// request. If it did, the background reconcile poll and SSE traffic that
+// keep the container list live would "touch" the session continuously,
+// and idle timeout could never actually trigger no matter how long the
+// user has been away from mouse/keyboard. Activity is refreshed only by
+// POST /api/auth/touch, which the frontend calls on real user interaction.
 function idleTimeout(req, res, next) {
   if (!req.session?.authenticated) {
     return next();
@@ -18,7 +24,6 @@ function idleTimeout(req, res, next) {
     });
   }
 
-  req.session.lastActivity = Date.now();
   next();
 }
 
