@@ -18,6 +18,9 @@ export function Layout() {
           <NavLink to="/images" className={({ isActive }) => (isActive ? 'active' : '')}>
             Images
           </NavLink>
+          <NavLink to="/admin" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Admin
+          </NavLink>
         </nav>
         <div className="app-header__session">
           {session && <span>{session.username}</span>}

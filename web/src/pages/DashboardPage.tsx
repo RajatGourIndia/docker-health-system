@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box } from 'lucide-react';
 import { useContainerEvents } from '../hooks/useContainerEvents';
 import { usePagedFilter } from '../hooks/usePagedFilter';
+import { useSettings } from '../hooks/useSettings';
 import { ContainerRow } from '../components/ContainerRow';
 import { LogsDrawer } from '../components/LogsDrawer';
 import { SearchInput } from '../components/SearchInput';
@@ -39,7 +40,10 @@ function matchesContainer(container: ContainerSummary, q: string): boolean {
 }
 
 export function DashboardPage() {
-  const { containers, loaded, connectionError, patchContainer } = useContainerEvents();
+  const settings = useSettings();
+  const { containers, loaded, connectionError, patchContainer } = useContainerEvents(
+    settings ? settings.pollIntervalSeconds * 1000 : undefined
+  );
   const [logsFor, setLogsFor] = useState<ContainerSummary | null>(null);
   const { query, setQuery, page, setPage, totalPages, filtered, pageItems } = usePagedFilter(
     containers,

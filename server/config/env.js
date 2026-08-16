@@ -16,9 +16,12 @@ const config = {
   port: Number(process.env.PORT) || 3000,
   nodeEnv: process.env.NODE_ENV || 'development',
 
+  // Where the admin account and app settings are persisted (JSON files).
+  // Mount this as a volume in production, or the admin account is lost on
+  // every container recreate.
+  dataDir: process.env.DATA_DIR || path.resolve(__dirname, '..', '..', 'data'),
+
   auth: {
-    username: required('DASHBOARD_USERNAME'),
-    passwordHash: required('DASHBOARD_PASSWORD_HASH'),
     sessionSecret: required('SESSION_SECRET'),
     idleTimeoutMinutes: Number(process.env.SESSION_IDLE_TIMEOUT_MINUTES) || 30,
     cookieSecure: process.env.COOKIE_SECURE === 'true',

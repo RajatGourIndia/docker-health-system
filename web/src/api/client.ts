@@ -1,9 +1,12 @@
 import type {
+  AdminSettings,
   ContainerAction,
   ContainerDetail,
   ContainerSummary,
   ImageSummary,
   SessionInfo,
+  SetupStatus,
+  SystemInfo,
 } from './types';
 
 export class ApiError extends Error {
@@ -59,4 +62,28 @@ export const containersApi = {
 
 export const imagesApi = {
   list: () => request<ImageSummary[]>('/api/images'),
+};
+
+export const setupApi = {
+  status: () => request<SetupStatus>('/api/setup/status'),
+  create: (username: string, password: string) =>
+    request<void>('/api/setup', {
+      method: 'POST',
+      body: JSON.stringify({ username, password }),
+    }),
+};
+
+export const adminApi = {
+  changePassword: (currentPassword: string, newPassword: string, confirmPassword: string) =>
+    request<void>('/api/admin/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
+    }),
+  getSettings: () => request<AdminSettings>('/api/admin/settings'),
+  updateSettings: (patch: Partial<AdminSettings>) =>
+    request<AdminSettings>('/api/admin/settings', {
+      method: 'PUT',
+      body: JSON.stringify(patch),
+    }),
+  systemInfo: () => request<SystemInfo>('/api/admin/system-info'),
 };

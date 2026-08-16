@@ -9,6 +9,8 @@ const { requireAuth } = require('./middleware/auth');
 const { idleTimeout } = require('./middleware/idleTimeout');
 const { errorHandler } = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth.routes');
+const setupRoutes = require('./routes/setup.routes');
+const adminRoutes = require('./routes/admin.routes');
 const containersRoutes = require('./routes/containers.routes');
 const imagesRoutes = require('./routes/images.routes');
 const logsRoutes = require('./routes/logs.routes');
@@ -38,12 +40,15 @@ function createApp() {
 
   app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
+  // Public — needed before any session can exist (first-run setup, login).
+  app.use('/api/setup', setupRoutes);
   app.use('/api/auth', authRoutes);
 
   app.use('/api', requireAuth, idleTimeout);
   app.use('/api/containers', containersRoutes);
   app.use('/api/containers', logsRoutes);
   app.use('/api/images', imagesRoutes);
+  app.use('/api/admin', adminRoutes);
 
   // In production the frontend is a static build served from the same origin
   // as the API, so the browser only ever talks to one host/port. In dev the

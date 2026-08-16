@@ -51,3 +51,20 @@ export interface SessionInfo {
 }
 
 export type ContainerAction = 'start' | 'stop' | 'restart' | 'pause' | 'unpause';
+
+export interface SetupStatus {
+  hasAdmin: boolean;
+}
+
+export interface AdminSettings {
+  pollIntervalSeconds: number;
+  idleTimeoutMinutes: number;
+}
+
+export interface SystemInfo {
+  dockerVersion: string;
+  apiVersion: string;
+  os: string;
+  arch: string;
+  dashboardUptimeSeconds: number;
+}

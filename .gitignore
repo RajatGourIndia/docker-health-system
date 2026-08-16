@@ -6,3 +6,4 @@ web/dist/
 build/
 coverage/
 .DS_Store
+/data/

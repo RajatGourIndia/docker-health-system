@@ -7,7 +7,9 @@ import type { ContainerEvent, ContainerSummary } from '../api/types';
 // long-lived connection without ever closing it, so the browser never learns
 // it needs to reconnect. Polling the full list periodically bounds how stale
 // the UI can get regardless of whether the stream is actually delivering.
-const RECONCILE_POLL_MS = 8000;
+// Configurable via the Admin tab (Settings → refresh interval); this is the
+// fallback when that hasn't loaded yet.
+const DEFAULT_RECONCILE_POLL_MS = 8000;
 
 interface ContainerEventsState {
   containers: ContainerSummary[];
@@ -49,7 +51,9 @@ function applyEvent(containers: ContainerSummary[], event: ContainerEvent): Cont
  * Subscribes to /api/containers/events (SSE): one snapshot, then incremental
  * container-event deltas for the lifetime of the connection.
  */
-export function useContainerEvents(): ContainerEventsResult {
+export function useContainerEvents(
+  pollIntervalMs: number = DEFAULT_RECONCILE_POLL_MS
+): ContainerEventsResult {
   const { handleUnauthorized } = useAuth();
   const [state, setState] = useState<ContainerEventsState>({
     containers: [],
@@ -103,13 +107,13 @@ export function useContainerEvents(): ContainerEventsResult {
         }
         // Any other failure (e.g. a transient network blip) just waits for the next tick.
       }
-    }, RECONCILE_POLL_MS);
+    }, pollIntervalMs);
 
     return () => {
       cancelled = true;
       clearInterval(poll);
     };
-  }, []);
+  }, [pollIntervalMs]);
 
   const patchContainer = useCallback((id: string, patch: Partial<ContainerSummary>) => {
     setState((prev) => ({ ...prev, containers: patchState(prev.containers, id, patch) }));

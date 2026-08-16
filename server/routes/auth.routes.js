@@ -1,28 +1,28 @@
 const express = require('express');
-const bcrypt = require('bcryptjs');
-const config = require('../config/env');
+const authService = require('../services/authService');
+const { currentIdleTimeoutMs } = require('../middleware/idleTimeout');
 
 const router = express.Router();
 
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res, next) => {
   const { username, password } = req.body || {};
 
   if (!username || !password) {
     return res.status(401).json({ error: 'invalid credentials' });
   }
 
-  const usernameMatches = username === config.auth.username;
-  const passwordMatches = await bcrypt.compare(password, config.auth.passwordHash);
-
-  if (!usernameMatches || !passwordMatches) {
-    return res.status(401).json({ error: 'invalid credentials' });
+  try {
+    const resolvedUsername = await authService.verifyLogin(username, password);
+    req.session.authenticated = true;
+    req.session.username = resolvedUsername;
+    req.session.lastActivity = Date.now();
+    res.json({ username: resolvedUsername });
+  } catch (err) {
+    if (err instanceof authService.AuthError) {
+      return res.status(err.statusCode).json({ error: err.message });
+    }
+    next(err);
   }
-
-  req.session.authenticated = true;
-  req.session.username = username;
-  req.session.lastActivity = Date.now();
-
-  res.json({ username });
 });
 
 router.post('/logout', (req, res) => {
@@ -35,10 +35,9 @@ router.get('/me', (req, res) => {
   if (!req.session?.authenticated) {
     return res.status(401).json({ error: 'authentication required' });
   }
-  const idleTimeoutMs = config.auth.idleTimeoutMinutes * 60 * 1000;
   res.json({
     username: req.session.username,
-    expiresAt: new Date(req.session.lastActivity + idleTimeoutMs).toISOString(),
+    expiresAt: new Date(req.session.lastActivity + currentIdleTimeoutMs()).toISOString(),
   });
 });
 
