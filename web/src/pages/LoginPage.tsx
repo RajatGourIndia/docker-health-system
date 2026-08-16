@@ -13,6 +13,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showRecovery, setShowRecovery] = useState(false);
 
   if (status === 'authenticated') {
     const redirectTo = (location.state as { from?: string } | null)?.from ?? '/';
@@ -77,6 +78,26 @@ export function LoginPage() {
             {submitting ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
+
+        <button
+          type="button"
+          className="login-recovery-toggle"
+          onClick={() => setShowRecovery((v) => !v)}
+        >
+          Forgot password?
+        </button>
+
+        {showRecovery && (
+          <div className="login-recovery-panel">
+            <p>
+              There's no email-based reset for this self-hosted tool — recovery requires shell
+              access to the container it's running in, since that already implies full control
+              over this Docker host:
+            </p>
+            <code>docker exec &lt;container-name&gt; npm run reset-admin-password</code>
+            <p className="cell-sub">Prompts for a new password directly in the terminal.</p>
+          </div>
+        )}
       </div>
     </div>
   );
