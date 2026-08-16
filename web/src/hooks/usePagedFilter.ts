@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 
 /**
  * Client-side search + pagination, shared by the Containers and Images
- * tables so both behave identically at the UI level. `pageSize` is expected
- * to come from useDynamicPageSize so the page adapts to the viewport rather
- * than using a fixed row count.
+ * tables so both behave identically at the UI level. The table region itself
+ * scrolls within a bounded box (see .table-wrap in global.css), so `pageSize`
+ * here only caps how much is rendered/subscribed at once — it doesn't need
+ * to match the viewport.
  */
 export function usePagedFilter<T>(
   items: T[],

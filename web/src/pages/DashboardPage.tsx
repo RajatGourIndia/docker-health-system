@@ -1,15 +1,17 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Box } from 'lucide-react';
 import { useContainerEvents } from '../hooks/useContainerEvents';
 import { usePagedFilter } from '../hooks/usePagedFilter';
-import { useDynamicPageSize } from '../hooks/useDynamicPageSize';
 import { ContainerRow } from '../components/ContainerRow';
 import { LogsDrawer } from '../components/LogsDrawer';
 import { SearchInput } from '../components/SearchInput';
 import { Pagination } from '../components/Pagination';
 import type { ContainerSummary } from '../api/types';
 
-const ROW_HEIGHT_PX = 62;
+// The table region scrolls within its own bounded box (see .table-wrap in
+// global.css), so this only caps DOM/SSE work per page — it doesn't need to
+// match the viewport.
+const PAGE_SIZE = 25;
 const SKELETON_COLUMNS = [70, 20, 80, 80, 60, 60, 110];
 
 function SkeletonRows({ count = 4 }: { count?: number }) {
@@ -40,12 +42,10 @@ function matchesContainer(container: ContainerSummary, q: string): boolean {
 export function DashboardPage() {
   const { containers, loaded, connectionError, patchContainer } = useContainerEvents();
   const [logsFor, setLogsFor] = useState<ContainerSummary | null>(null);
-  const tableAnchorRef = useRef<HTMLDivElement>(null);
-  const pageSize = useDynamicPageSize(ROW_HEIGHT_PX, tableAnchorRef);
   const { query, setQuery, page, setPage, totalPages, filtered, pageItems } = usePagedFilter(
     containers,
     matchesContainer,
-    pageSize
+    PAGE_SIZE
   );
 
   return (
@@ -80,7 +80,7 @@ export function DashboardPage() {
           <p>No containers match "{query}"</p>
         </div>
       ) : (
-        <div className="table-wrap" ref={tableAnchorRef}>
+        <div className="table-wrap">
           <table className="table">
             <thead>
               <tr>

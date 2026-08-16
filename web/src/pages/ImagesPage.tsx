@@ -1,14 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Layers } from 'lucide-react';
 import { imagesApi } from '../api/client';
 import { usePagedFilter } from '../hooks/usePagedFilter';
-import { useDynamicPageSize } from '../hooks/useDynamicPageSize';
 import { SearchInput } from '../components/SearchInput';
 import { Pagination } from '../components/Pagination';
 import { formatBytes, formatRelativeTime } from '../utils/format';
 import type { ImageSummary } from '../api/types';
 
-const ROW_HEIGHT_PX = 62;
+// The table region scrolls within its own bounded box (see .table-wrap in
+// global.css), so this only caps how many rows render at once.
+const PAGE_SIZE = 25;
 const LARGE_IMAGE_BYTES = 500 * 1024 * 1024;
 
 function isOwnImage(image: ImageSummary): boolean {
@@ -23,12 +24,10 @@ function matchesImage(image: ImageSummary, q: string): boolean {
 export function ImagesPage() {
   const [images, setImages] = useState<ImageSummary[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const tableAnchorRef = useRef<HTMLDivElement>(null);
-  const pageSize = useDynamicPageSize(ROW_HEIGHT_PX, tableAnchorRef);
   const { query, setQuery, page, setPage, totalPages, filtered, pageItems } = usePagedFilter(
     images ?? [],
     matchesImage,
-    pageSize
+    PAGE_SIZE
   );
 
   useEffect(() => {
@@ -79,7 +78,7 @@ export function ImagesPage() {
           <p>No images match "{query}"</p>
         </div>
       ) : (
-        <div className="table-wrap" ref={tableAnchorRef}>
+        <div className="table-wrap">
           <table className="table">
             <thead>
               <tr>

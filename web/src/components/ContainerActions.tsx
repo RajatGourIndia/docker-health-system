@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Play, Square, Pause, RotateCw, ScrollText } from 'lucide-react';
+import { Play, Square, Pause, RotateCw, ScrollText, Loader2 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { containersApi } from '../api/client';
 import type { ContainerAction, ContainerSummary } from '../api/types';
@@ -93,18 +93,29 @@ export function ContainerActions({ container, onOpenLogs, onPatch }: ContainerAc
           return (
             <button
               key={action}
+              type="button"
               className={`btn ${ACTION_TINT[action]}`}
               disabled={pending !== null}
               onClick={() => run(action)}
+              title={ACTION_LABELS[action]}
+              aria-label={ACTION_LABELS[action]}
             >
-              <Icon size={13} />
-              {pending === action ? '…' : ACTION_LABELS[action]}
+              {pending === action ? (
+                <Loader2 size={14} className="btn-spinner" />
+              ) : (
+                <Icon size={14} />
+              )}
             </button>
           );
         })}
-        <button className="btn btn--ghost" onClick={() => onOpenLogs(container)}>
-          <ScrollText size={13} />
-          Logs
+        <button
+          type="button"
+          className="btn btn--ghost"
+          onClick={() => onOpenLogs(container)}
+          title="Logs"
+          aria-label="Logs"
+        >
+          <ScrollText size={14} />
         </button>
       </div>
       {error && <div className="form-error">{error}</div>}
