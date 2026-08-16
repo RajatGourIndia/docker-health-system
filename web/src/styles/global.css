@@ -13,7 +13,12 @@ body,
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: var(--surface-page);
+  background: linear-gradient(
+    180deg,
+    var(--surface-page) 0%,
+    color-mix(in srgb, var(--surface-page) 88%, black) 100%
+  );
+  background-attachment: fixed;
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
 }
@@ -182,10 +187,44 @@ input {
   color: #04211e;
 }
 
-.btn--danger:hover:not(:disabled) {
+.btn--tint-good {
+  color: var(--status-good);
+  border-color: color-mix(in srgb, var(--status-good) 32%, var(--border));
+}
+.btn--tint-good:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--status-good) 12%, var(--surface-2));
+  color: var(--status-good);
+  border-color: color-mix(in srgb, var(--status-good) 50%, var(--border));
+}
+
+.btn--tint-accent {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--border));
+}
+.btn--tint-accent:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface-2));
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 50%, var(--border));
+}
+
+.btn--tint-warning {
+  color: var(--status-warning);
+  border-color: color-mix(in srgb, var(--status-warning) 32%, var(--border));
+}
+.btn--tint-warning:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--status-warning) 12%, var(--surface-2));
+  color: var(--status-warning);
+  border-color: color-mix(in srgb, var(--status-warning) 50%, var(--border));
+}
+
+.btn--tint-critical {
   color: var(--status-critical);
-  border-color: color-mix(in srgb, var(--status-critical) 40%, var(--border));
-  background: rgba(242, 73, 92, 0.08);
+  border-color: color-mix(in srgb, var(--status-critical) 32%, var(--border));
+}
+.btn--tint-critical:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--status-critical) 12%, var(--surface-2));
+  color: var(--status-critical);
+  border-color: color-mix(in srgb, var(--status-critical) 50%, var(--border));
 }
 
 .btn--ghost {
@@ -206,7 +245,8 @@ input {
 /* ---------- Login ---------- */
 
 .login-page {
-  min-height: 100%;
+  min-height: 100vh;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -265,8 +305,16 @@ input {
 
 /* ---------- Table ---------- */
 
+.table-wrap {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+
 .table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
   font-size: 13px;
 }
@@ -297,13 +345,62 @@ input {
 }
 
 .table tbody tr:hover {
-  background: var(--surface-1);
+  background: var(--surface-2);
 }
 
 .table-empty {
   padding: var(--space-6);
   text-align: center;
   color: var(--text-muted);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.empty-state svg {
+  color: var(--text-muted);
+  margin-bottom: var(--space-1);
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* ---------- Loading skeleton ---------- */
+
+.skeleton-bar {
+  height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--surface-3) 25%,
+    var(--surface-2) 50%,
+    var(--surface-3) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-sweep 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-sweep {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 .cell-name {
@@ -334,36 +431,30 @@ input {
 .status-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.status-badge--running {
+  background: color-mix(in srgb, var(--status-good) 15%, transparent);
+  color: var(--status-good);
+}
+.status-badge--paused,
+.status-badge--restarting {
+  background: color-mix(in srgb, var(--status-warning) 15%, transparent);
+  color: var(--status-warning);
+}
+.status-badge--exited,
+.status-badge--created {
+  background: color-mix(in srgb, var(--status-muted) 18%, transparent);
   color: var(--text-secondary);
 }
-
-.status-badge__dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex: none;
-}
-
-.status-badge--running .status-badge__dot {
-  background: var(--status-good);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--status-good) 70%, transparent);
-}
-.status-badge--paused .status-badge__dot {
-  background: var(--status-warning);
-}
-.status-badge--restarting .status-badge__dot {
-  background: var(--status-warning);
-}
-.status-badge--exited .status-badge__dot,
-.status-badge--created .status-badge__dot {
-  background: var(--status-muted);
-}
-.status-badge--dead .status-badge__dot {
-  background: var(--status-critical);
-  box-shadow: 0 0 6px color-mix(in srgb, var(--status-critical) 70%, transparent);
+.status-badge--dead {
+  background: color-mix(in srgb, var(--status-critical) 15%, transparent);
+  color: var(--status-critical);
 }
 
 /* ---------- Meter ---------- */

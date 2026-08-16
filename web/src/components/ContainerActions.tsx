@@ -47,6 +47,14 @@ const ACTION_ICONS: Record<ContainerAction, LucideIcon> = {
   unpause: Play,
 };
 
+const ACTION_TINT: Record<ContainerAction, string> = {
+  start: 'btn--tint-good',
+  unpause: 'btn--tint-good',
+  restart: 'btn--tint-accent',
+  pause: 'btn--tint-warning',
+  stop: 'btn--tint-critical',
+};
+
 const ERROR_DISPLAY_MS = 4000;
 
 function friendlyError(err: unknown): string {
@@ -85,7 +93,7 @@ export function ContainerActions({ container, onOpenLogs, onPatch }: ContainerAc
           return (
             <button
               key={action}
-              className={`btn ${action === 'stop' ? 'btn--danger' : ''}`}
+              className={`btn ${ACTION_TINT[action]}`}
               disabled={pending !== null}
               onClick={() => run(action)}
             >

@@ -11,10 +11,5 @@ const LABELS: Record<string, string> = {
 
 export function StatusBadge({ state }: { state: ContainerState }) {
   const key = LABELS[state] ? state : 'exited';
-  return (
-    <span className={`status-badge status-badge--${key}`}>
-      <span className="status-badge__dot" aria-hidden="true" />
-      {LABELS[key] ?? state}
-    </span>
-  );
+  return <span className={`status-badge status-badge--${key}`}>{LABELS[key] ?? state}</span>;
 }
