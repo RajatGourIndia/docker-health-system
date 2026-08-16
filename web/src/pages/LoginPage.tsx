@@ -94,8 +94,13 @@ export function LoginPage() {
               access to the container it's running in, since that already implies full control
               over this Docker host:
             </p>
-            <code>docker exec &lt;container-name&gt; npm run reset-admin-password</code>
-            <p className="cell-sub">Prompts for a new password directly in the terminal.</p>
+            <code className="login-recovery-command">
+              docker exec -it &lt;container-name&gt; npm run reset-admin-password
+            </code>
+            <p className="cell-sub">
+              The <code className="login-recovery-inline-code">-it</code> flags matter — without
+              them the prompt has no terminal to read your typed password from and just hangs.
+            </p>
           </div>
         )}
       </div>

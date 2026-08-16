@@ -452,7 +452,7 @@ input {
   margin: 0 0 var(--space-2);
 }
 
-.login-recovery-panel code {
+.login-recovery-command {
   display: block;
   margin: var(--space-2) 0;
   padding: var(--space-2) var(--space-3);
@@ -463,6 +463,15 @@ input {
   font-size: 11.5px;
   color: var(--accent);
   word-break: break-all;
+}
+
+.login-recovery-inline-code {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--accent);
+  background: var(--surface-page);
+  padding: 1px 5px;
+  border-radius: 3px;
 }
 
 .field {
