@@ -20,8 +20,11 @@ export function ContainerRow({
   return (
     <tr>
       <td className="cell-name-cell">
-        <div className="cell-name" title={container.name}>
-          {container.name}
+        <div className="cell-name-row">
+          <span className="cell-name" title={container.name}>
+            {container.name}
+          </span>
+          {container.isSelf && <span className="tag-pill tag-pill--accent">This app</span>}
         </div>
         <div className="cell-sub" title={container.image}>
           {container.image}

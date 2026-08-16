@@ -8,6 +8,17 @@ class ContainerActionError extends Error {
   }
 }
 
+// Docker sets a container's HOSTNAME env var to its own (short) container ID
+// by default, unless overridden — so this reliably answers "is that
+// container me?" without relying on an image name/tag convention that could
+// change. Prefixed match since HOSTNAME is the short (12-char) form of the
+// full ID Docker's API returns elsewhere.
+const SELF_HOSTNAME = process.env.HOSTNAME || '';
+
+function isSelfContainer(id) {
+  return Boolean(SELF_HOSTNAME) && typeof id === 'string' && id.startsWith(SELF_HOSTNAME);
+}
+
 function mapPorts(ports) {
   return (ports || []).map((p) => ({
     privatePort: p.PrivatePort,
@@ -26,6 +37,7 @@ function toSummary(container) {
     status: container.Status,
     ports: mapPorts(container.Ports),
     createdAt: new Date(container.Created * 1000).toISOString(),
+    isSelf: isSelfContainer(container.Id),
   };
 }
 
@@ -61,6 +73,7 @@ function toSummaryFromInspect(data) {
     status: data.State?.Status,
     ports: mapPortsFromInspect(data.NetworkSettings?.Ports),
     createdAt: data.Created,
+    isSelf: isSelfContainer(data.Id),
   };
 }
 
@@ -80,6 +93,7 @@ async function inspectContainer(id) {
     mounts: data.Mounts || [],
     restartPolicy: data.HostConfig?.RestartPolicy || null,
     ports: mapPortsFromInspect(data.NetworkSettings?.Ports),
+    isSelf: isSelfContainer(data.Id),
   };
 }
 

@@ -57,6 +57,9 @@ const ACTION_TINT: Record<ContainerAction, string> = {
 
 const ERROR_DISPLAY_MS = 4000;
 
+const SELF_ACTION_TOOLTIP =
+  "Can't manage the dashboard's own container from here — use `docker restart <name>` from the host if needed.";
+
 function friendlyError(err: unknown): string {
   if (err instanceof Error && /already/i.test(err.message)) {
     return 'Already in that state — the list may be a step behind, refresh if this repeats.';
@@ -95,9 +98,9 @@ export function ContainerActions({ container, onOpenLogs, onPatch }: ContainerAc
               key={action}
               type="button"
               className={`btn ${ACTION_TINT[action]}`}
-              disabled={pending !== null}
+              disabled={pending !== null || container.isSelf}
               onClick={() => run(action)}
-              title={ACTION_LABELS[action]}
+              title={container.isSelf ? SELF_ACTION_TOOLTIP : ACTION_LABELS[action]}
               aria-label={ACTION_LABELS[action]}
             >
               {pending === action ? (

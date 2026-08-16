@@ -15,6 +15,8 @@ export interface ContainerSummary {
   status: string;
   ports: PortMapping[];
   createdAt: string;
+  /** True for the container the dashboard itself is running in. */
+  isSelf: boolean;
 }
 
 export interface ContainerDetail extends ContainerSummary {
