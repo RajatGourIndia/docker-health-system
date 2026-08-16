@@ -2,10 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 /**
  * Client-side search + pagination, shared by the Containers and Images
- * tables so both behave identically at the UI level. The table region itself
- * scrolls within a bounded box (see .table-wrap in global.css), so `pageSize`
- * here only caps how much is rendered/subscribed at once — it doesn't need
- * to match the viewport.
+ * tables so both behave identically at the UI level. `pageSize` only caps
+ * how much is rendered/subscribed at once — the page scrolls normally, so
+ * it doesn't need to match the viewport.
  */
 export function usePagedFilter<T>(
   items: T[],

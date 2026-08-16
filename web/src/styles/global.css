@@ -8,7 +8,6 @@ html,
 body,
 #root {
   height: 100%;
-  overflow: hidden;
 }
 
 body {
@@ -40,15 +39,12 @@ input {
 /* ---------- Shell ---------- */
 
 .app-shell {
-  height: 100vh;
-  height: 100dvh;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .app-header {
-  flex: none;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -114,18 +110,13 @@ input {
 
 .app-main {
   flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
   padding: var(--space-5);
-  max-width: 1200px;
+  max-width: 1800px;
   width: 100%;
   margin: 0 auto;
 }
 
 .page-header {
-  flex: none;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
@@ -140,12 +131,16 @@ input {
 }
 
 .page-toolbar {
-  flex: none;
+  height: 52px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
   margin-bottom: var(--space-4);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--surface-page);
 }
 
 .search-input {
@@ -182,8 +177,9 @@ input {
 .pagination {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-3);
-  flex: none;
+  margin-top: var(--space-4);
 }
 
 .pagination__label {
@@ -193,7 +189,6 @@ input {
 }
 
 .connection-banner {
-  flex: none;
   font-size: 13px;
   color: var(--status-warning);
   background: rgba(245, 165, 36, 0.1);
@@ -451,9 +446,7 @@ input {
   background: var(--surface-1);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  overflow: auto;
-  flex: 1;
-  min-height: 0;
+  overflow-x: auto;
 }
 
 .table {
@@ -473,7 +466,9 @@ input {
   padding: var(--space-2) var(--space-3);
   border-bottom: 1px solid var(--gridline);
   position: sticky;
-  top: 0;
+  /* Matches .page-toolbar's fixed height so the sticky header sits flush
+     below the sticky toolbar during page scroll, with no overlap/gap. */
+  top: 52px;
   background: var(--surface-1);
   z-index: 1;
 }

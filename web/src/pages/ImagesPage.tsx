@@ -7,8 +7,8 @@ import { Pagination } from '../components/Pagination';
 import { formatBytes, formatRelativeTime } from '../utils/format';
 import type { ImageSummary } from '../api/types';
 
-// The table region scrolls within its own bounded box (see .table-wrap in
-// global.css), so this only caps how many rows render at once.
+// Caps how many rows render at once — the page scrolls normally, so this
+// doesn't need to match the viewport.
 const PAGE_SIZE = 25;
 const LARGE_IMAGE_BYTES = 500 * 1024 * 1024;
 
@@ -61,7 +61,6 @@ export function ImagesPage() {
       {images && (
         <div className="page-toolbar">
           <SearchInput value={query} onChange={setQuery} placeholder="Search repository, tag, ID…" />
-          <Pagination page={page} totalPages={totalPages} onChange={setPage} />
         </div>
       )}
 
@@ -121,6 +120,10 @@ export function ImagesPage() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {images && filtered.length > 0 && (
+        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
       )}
     </>
   );

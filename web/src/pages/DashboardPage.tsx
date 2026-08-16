@@ -8,9 +8,8 @@ import { SearchInput } from '../components/SearchInput';
 import { Pagination } from '../components/Pagination';
 import type { ContainerSummary } from '../api/types';
 
-// The table region scrolls within its own bounded box (see .table-wrap in
-// global.css), so this only caps DOM/SSE work per page — it doesn't need to
-// match the viewport.
+// Caps DOM/SSE work per page (each row runs its own live-stats subscription)
+// — the page scrolls normally, so this doesn't need to match the viewport.
 const PAGE_SIZE = 25;
 const SKELETON_COLUMNS = [70, 20, 80, 80, 60, 60, 110];
 
@@ -64,7 +63,6 @@ export function DashboardPage() {
       {loaded && (
         <div className="page-toolbar">
           <SearchInput value={query} onChange={setQuery} placeholder="Search name, image, status…" />
-          <Pagination page={page} totalPages={totalPages} onChange={setPage} />
         </div>
       )}
 
@@ -109,6 +107,10 @@ export function DashboardPage() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {loaded && filtered.length > 0 && (
+        <Pagination page={page} totalPages={totalPages} onChange={setPage} />
       )}
 
       {logsFor && <LogsDrawer container={logsFor} onClose={() => setLogsFor(null)} />}
