@@ -1,21 +1,21 @@
 import { StatusBadge } from './StatusBadge';
 import { Meter } from './Meter';
 import { ContainerActions } from './ContainerActions';
-import { useContainerStats } from '../hooks/useContainerStats';
 import { formatBytes, formatPercent, formatRelativeTime } from '../utils/format';
-import type { ContainerSummary } from '../api/types';
+import type { ContainerStats, ContainerSummary } from '../api/types';
 
 export function ContainerRow({
   container,
+  stats,
   onOpenLogs,
   onPatch,
 }: {
   container: ContainerSummary;
+  stats: ContainerStats | null;
   onOpenLogs: (container: ContainerSummary) => void;
   onPatch: (id: string, patch: Partial<ContainerSummary>) => void;
 }) {
   const isRunning = container.state === 'running';
-  const stats = useContainerStats(container.id, isRunning);
 
   return (
     <tr>

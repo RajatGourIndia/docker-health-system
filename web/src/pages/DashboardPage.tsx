@@ -3,14 +3,16 @@ import { Box } from 'lucide-react';
 import { useContainerEvents } from '../hooks/useContainerEvents';
 import { usePagedFilter } from '../hooks/usePagedFilter';
 import { useSettings } from '../hooks/useSettings';
+import { useAllContainerStats } from '../hooks/useAllContainerStats';
 import { ContainerRow } from '../components/ContainerRow';
 import { LogsDrawer } from '../components/LogsDrawer';
 import { SearchInput } from '../components/SearchInput';
 import { Pagination } from '../components/Pagination';
 import type { ContainerSummary } from '../api/types';
 
-// Caps DOM/SSE work per page (each row runs its own live-stats subscription)
-// — the page scrolls normally, so this doesn't need to match the viewport.
+// Caps how many rows render at once — the page scrolls normally, so this
+// doesn't need to match the viewport. Stats no longer factor into this: all
+// rows share one connection via useAllContainerStats, regardless of page size.
 const PAGE_SIZE = 20;
 const SKELETON_COLUMNS = [70, 20, 80, 80, 60, 60, 110];
 
@@ -45,6 +47,7 @@ export function DashboardPage() {
     settings ? settings.pollIntervalSeconds * 1000 : undefined
   );
   const [logsFor, setLogsFor] = useState<ContainerSummary | null>(null);
+  const statsById = useAllContainerStats();
   const { query, setQuery, page, setPage, totalPages, filtered, pageItems } = usePagedFilter(
     containers,
     matchesContainer,
@@ -105,6 +108,7 @@ export function DashboardPage() {
                   <ContainerRow
                     key={container.id}
                     container={container}
+                    stats={statsById.get(container.id) ?? null}
                     onOpenLogs={setLogsFor}
                     onPatch={patchContainer}
                   />
