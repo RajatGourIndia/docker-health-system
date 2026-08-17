@@ -10,6 +10,8 @@ A lightweight, self-hosted web dashboard for monitoring and managing local Docke
 The fastest way to run it — just Docker installed, one command, nothing to configure. Every setting has a safe default, and the admin account is created through the first-run screen in your browser, not a config file.
 
 ```bash
+# Port 3000 already in use (e.g. Grafana, another dev server)? Change the
+# host-side number in -p, e.g. -p 3001:3000, then use that port below instead.
 docker run -d --name dashboard \
   -p 3000:3000 \
   --user root \
@@ -19,6 +21,12 @@ docker run -d --name dashboard \
 ```
 
 *(`--user root` is required, not optional — the Docker socket is root-owned on virtually every host, and the container can't reach it otherwise.)*
+
+**Windows PowerShell users:** paste the command as a single line below, since PowerShell doesn't support `\` for line continuation the way bash does. (Same port-conflict note applies — swap `3000:3000` for e.g. `3001:3000` if needed.)
+
+```powershell
+docker run -d --name dashboard -p 3000:3000 --user root -v /var/run/docker.sock:/var/run/docker.sock -v dashboard-data:/app/data rajatindia/docker-health-system:latest
+```
 
 Prefer Compose? Same thing, referencing the published image directly (no cloning, no build):
 
@@ -57,6 +65,25 @@ This uses the `docker-compose.yml` already in the repo, which builds from the lo
 ### First run
 
 Open **http://localhost:3000**. Since no admin account exists yet, you'll land on a **Create Admin Account** screen instead of a login page — pick a username and password there. Every visit after that shows the normal login screen.
+
+## Applying .env changes
+
+If you edit `.env` after the container is already running, `docker restart` won't pick it up — it reuses the container's original environment as-is. What actually applies the change depends on how you're running it:
+
+- **Docker Compose**: just run `docker compose up -d` again. Compose detects that the resolved config (including everything loaded from `.env`) changed since the container was created, and recreates it automatically — no extra step needed.
+- **Plain `docker run`**: use the included helper script, which does stop + remove + run with the same flags as the Quick Start command above:
+
+  ```bash
+  ./scripts/recreate.sh
+  ```
+
+  On Windows PowerShell:
+
+  ```powershell
+  .\scripts\recreate.ps1
+  ```
+
+  Both pick up a `.env` in the current directory automatically and accept overrides if you changed the container name or port, e.g. `HOST_PORT=3001 ./scripts/recreate.sh` or `.\scripts\recreate.ps1 -HostPort 3001`.
 
 ## Features
 
