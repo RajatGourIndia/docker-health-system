@@ -47,12 +47,16 @@ export function DashboardPage() {
     settings ? settings.pollIntervalSeconds * 1000 : undefined
   );
   const [logsFor, setLogsFor] = useState<ContainerSummary | null>(null);
-  const statsById = useAllContainerStats();
   const { query, setQuery, page, setPage, totalPages, filtered, pageItems } = usePagedFilter(
     containers,
     matchesContainer,
     PAGE_SIZE
   );
+  // Only the containers actually visible on the current page/search result
+  // get a live stats subscription — see useAllContainerStats for why that
+  // matters at scale.
+  const visibleIds = pageItems.map((c) => c.id);
+  const statsById = useAllContainerStats(visibleIds);
 
   return (
     <>
