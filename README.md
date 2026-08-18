@@ -2,8 +2,7 @@
 
 A lightweight, self-hosted web dashboard for monitoring and managing local Docker containers.
 
-<!-- TODO: add a screenshot here, e.g. -->
-<!-- ![Docker Dashboard — Containers view](docs/screenshot-containers.png) -->
+![Containers view](docs/screenshots/containers.png)
 
 ## Quick start
 
@@ -92,6 +91,13 @@ If you edit `.env` after the container is already running, `docker restart` won'
 - **Logs** — tail recent output or follow it live, with a one-click download
 - **Images** — repository/tag, size, and creation date for everything pulled or built locally
 - **Admin settings** — change the admin password, tune the live-refresh interval and session idle timeout, and view read-only system info (Docker Engine/API version, dashboard uptime)
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Sign in](docs/screenshots/login.png) | ![Admin tab](docs/screenshots/admin.png) |
+| ![Images](docs/screenshots/images.png) | ![Logs](docs/screenshots/logs.png) |
 
 ## Security note
 
